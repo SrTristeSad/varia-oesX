@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Variações – Tradução Não Oficial</title>
+<style>
+    :root {
+        --bg-color: #0f172a;
+        --box-bg: #1e293b;
+        --text-color: #f8fafc;
+        --text-muted: #94a3b8;
+        --btn-generate: #3b82f6;
+        --btn-generate-hover: #2563eb;
+        --btn-copy: #10b981;
+        --btn-copy-hover: #059669;
+        --border-color: #334155;
+    }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+    }
+
+    .container {
+        background-color: var(--box-bg);
+        padding: 30px;
+        border-radius: 16px;
+        width: 90%;
+        max-width: 500px;
+        text-align: center;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    }
+
+    h2 {
+        margin-top: 0;
+        margin-bottom: 20px;
+        font-size: 1.5rem;
+        color: var(--text-color);
+    }
+
+    .display-area {
+        margin: 20px 0;
+        padding: 20px;
+        background-color: var(--bg-color);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        min-height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        line-height: 1.4;
+        word-break: break-word;
+        transition: all 0.3s ease;
+    }
+
+    .placeholder {
+        color: var(--text-muted);
+        font-style: italic;
+    }
+
+    .controls {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    button {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: 600;
+        transition: transform 0.1s, background-color 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    button:active {
+        transform: scale(0.96);
+    }
+
+    .btn-gerar {
+        background-color: var(--btn-generate);
+        color: white;
+    }
+
+    .btn-gerar:hover {
+        background-color: var(--btn-generate-hover);
+    }
+
+    .btn-copiar {
+        background-color: var(--btn-copy);
+        color: white;
+    }
+
+    .btn-copiar:hover {
+        background-color: var(--btn-copy-hover);
+    }
+
+    .toast {
+        visibility: hidden;
+        min-width: 200px;
+        background-color: #333;
+        color: #fff;
+        text-align: center;
+        border-radius: 8px;
+        padding: 12px;
+        position: fixed;
+        z-index: 1;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 0.9rem;
+        opacity: 0;
+        transition: opacity 0.3s, bottom 0.3s;
+    }
+
+    .toast.show {
+        visibility: visible;
+        opacity: 1;
+        bottom: 50px;
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Tradução Não Oficial</h2>
+    <div id="textoDisplay" class="display-area placeholder">Clique no botão para gerar uma variação.</div>
+    <div class="controls">
+        <button class="btn-gerar" onclick="gerarFrase()">
+            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+            Gerar Frase
+        </button>
+        <button class="btn-copiar" onclick="copiarTexto()">
+            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+            Copiar
+        </button>
+    </div>
+</div>
+
+<div id="toast" class="toast">Texto copiado para a área de transferência!</div>
+
+<script>
+// Array com 500 variações focadas em "não oficial"
+const variacoes = [
+    // Lote 1: Direto e Simples
+    "Tradução não oficial.", "Versão não oficial.", "Texto não oficial.", "Adaptação não oficial.", "Conteúdo não oficial.",
+    "Tradução sem caráter oficial.", "Versão sem caráter oficial.", "Texto sem caráter oficial.", "Adaptação sem caráter oficial.", "Conteúdo sem caráter oficial.",
+    "Tradução extraoficial.", "Versão extraoficial.", "Texto extraoficial.", "Adaptação extraoficial.", "Conteúdo extraoficial.",
+    "Tradução não chancelada.", "Versão não chancelada.", "Texto não chancelado.", "Adaptação não chancelada.", "Conteúdo não chancelado.",
+    "Tradução não certificada.", "Versão não certificada.", "Texto não certificado.", "Adaptação não certificada.", "Conteúdo não certificado.",
+    "Tradução não homologada.", "Versão não homologada.", "Texto não homologado.", "Adaptação não homologada.", "Conteúdo não homologado.",
+    "Tradução não autorizada oficialmente.", "Versão não autorizada oficialmente.", "Texto não autorizado oficialmente.", "Adaptação não autorizada oficialmente.", "Conteúdo não autorizado oficialmente.",
+    "Tradução informal.", "Versão informal.", "Texto informal.", "Adaptação informal.", "Conteúdo informal.",
+    "Tradução independente.", "Versão independente.", "Texto independente.", "Adaptação independente.", "Conteúdo independente.",
+    "Tradução alternativa.", "Versão alternativa.", "Texto alternativo.", "Adaptação alternativa.", "Conteúdo alternativo.",
+    
+    // Lote 2: Expandindo o conceito
+    "Esta é uma tradução não oficial.", "Trata-se de uma versão não oficial.", "Aviso: texto não oficial.", "Nota: adaptação não oficial.", "Atenção: conteúdo não oficial.",
+    "Tradução feita de forma não oficial.", "Versão gerada de forma não oficial.", "Texto criado de forma não oficial.", "Adaptação realizada de forma não oficial.", "Conteúdo produzido de forma não oficial.",
+    "Tradução de origem não oficial.", "Versão de origem não oficial.", "Texto de origem não oficial.", "Adaptação de origem não oficial.", "Conteúdo de origem não oficial.",
+    "Tradução livre, não oficial.", "Versão livre, não oficial.", "Texto livre, não oficial.", "Adaptação livre, não oficial.", "Conteúdo livre, não oficial.",
+    "Tradução paralela, não oficial.", "Versão paralela, não oficial.", "Texto paralelo, não oficial.", "Adaptação paralela, não oficial.", "Conteúdo paralelo, não oficial.",
+    "Tradução comunitária (não oficial).", "Versão comunitária (não oficial).", "Texto comunitário (não oficial).", "Adaptação comunitária (não oficial).", "Conteúdo comunitário (não oficial).",
+    "Tradução de fãs, não oficial.", "Versão de fãs, não oficial.", "Texto de fãs, não oficial.", "Adaptação de fãs, não oficial.", "Conteúdo de fãs, não oficial.",
+    "Tradução voluntária (não oficial).", "Versão voluntária (não oficial).", "Texto voluntário (não oficial).", "Adaptação voluntária (não oficial).", "Conteúdo voluntário (não oficial).",
+    "Tradução não governamental/oficial.", "Versão não governamental/oficial.", "Texto não governamental/oficial.", "Adaptação não governamental/oficial.", "Conteúdo não governamental/oficial.",
+    "Tradução não institucional.", "Versão não institucional.", "Texto não institucional.", "Adaptação não institucional.", "Conteúdo não institucional.",
+
+    // Lote 3: Foco em PT/Português com "não oficial"
+    "Tradução não oficial para o português.", "Versão não oficial em português.", "Texto em português não oficial.", "Adaptação não oficial para PT.", "Conteúdo em PT não oficial.",
+    "Tradução PT não oficial.", "Versão PT não oficial.", "Texto PT não oficial.", "Adaptação PT não oficial.", "Conteúdo PT não oficial.",
+    "Tradução não oficial PT-BR.", "Versão não oficial PT-BR.", "Texto não oficial PT-BR.", "Adaptação não oficial PT-BR.", "Conteúdo não oficial PT-BR.",
+    "Tradução para português (não oficial).", "Versão em português (não oficial).", "Texto em português (não oficial).", "Adaptação para PT (não oficial).", "Conteúdo em PT (não oficial).",
+    "Português: Tradução não oficial.", "Português: Versão não oficial.", "PT: Texto não oficial.", "PT: Adaptação não oficial.", "PT-BR: Conteúdo não oficial.",
+    "Tradução não oficial para lusófonos.", "Versão não oficial para lusófonos.", "Texto não oficial para lusófonos.", "Adaptação não oficial para lusófonos.", "Conteúdo não oficial para lusófonos.",
+    "Tradução de língua portuguesa não oficial.", "Versão de língua portuguesa não oficial.", "Texto de língua portuguesa não oficial.", "Adaptação de língua portuguesa não oficial.", "Conteúdo de língua portuguesa não oficial.",
+    "Tradução não oficial, idioma português.", "Versão não oficial, idioma português.", "Texto não oficial, idioma português.", "Adaptação não oficial, idioma PT.", "Conteúdo não oficial, idioma PT.",
+    "Tradução portuguesa não oficializada.", "Versão portuguesa não oficializada.", "Texto português não oficializado.", "Adaptação portuguesa não oficializada.", "Conteúdo português não oficializado.",
+    "Tradução extraoficial em português.", "Versão extraoficial em português.", "Texto extraoficial em português.", "Adaptação extraoficial em PT.", "Conteúdo extraoficial em PT.",
+
+    // Lote 4: Variações de estrutura
+    "Não oficial: Tradução.", "Não oficial: Versão.", "Não oficial: Texto.", "Não oficial: Adaptação.", "Não oficial: Conteúdo.",
+    "Sem validação oficial: Tradução.", "Sem validação oficial: Versão.", "Sem validação oficial: Texto.", "Sem validação oficial: Adaptação.", "Sem validação oficial: Conteúdo.",
+    "Tradução - Caráter não oficial.", "Versão - Caráter não oficial.", "Texto - Caráter não oficial.", "Adaptação - Caráter não oficial.", "Conteúdo - Caráter não oficial.",
+    "Tradução (Status: Não Oficial).", "Versão (Status: Não Oficial).", "Texto (Status: Não Oficial).", "Adaptação (Status: Não Oficial).", "Conteúdo (Status: Não Oficial).",
+    "Tradução [Não Oficial].", "Versão [Não Oficial].", "Texto [Não Oficial].", "Adaptação [Não Oficial].", "Conteúdo [Não Oficial].",
+    "Tradução *Não Oficial*.", "Versão *Não Oficial*.", "Texto *Não Oficial*.", "Adaptação *Não Oficial*.", "Conteúdo *Não Oficial*.",
+    "Tradução, mas não oficial.", "Versão, porém não oficial.", "Texto, todavia não oficial.", "Adaptação, contudo não oficial.", "Conteúdo, entretanto não oficial.",
+    "Tradução meramente não oficial.", "Versão estritamente não oficial.", "Texto puramente não oficial.", "Adaptação exclusivamente não oficial.", "Conteúdo unicamente não oficial.",
+    "Tradução de cunho não oficial.", "Versão de natureza não oficial.", "Texto de aspecto não oficial.", "Adaptação de viés não oficial.", "Conteúdo de teor não oficial.",
+    "Tradução, ressalva-se, não oficial.", "Versão, nota-se, não oficial.", "Texto, destaca-se, não oficial.", "Adaptação, frisa-se, não oficial.", "Conteúdo, enfatiza-se, não oficial.",
+
+    // Lote 5: Combinações mais longas
+    "Esta é uma tradução independente e não oficial para o português.",
+    "Versão em português produzida de forma totalmente não oficial.",
+    "Texto adaptado para a língua portuguesa sem qualquer caráter oficial.",
+    "Adaptação livre e não oficial do conteúdo original.",
+    "Conteúdo traduzido para fins informativos (tradução não oficial).",
+    "Tradução comunitária realizada sem endosso ou caráter oficial.",
+    "Versão extraoficial disponibilizada para falantes de português.",
+    "Texto em português gerado por terceiros, não oficial.",
+    "Adaptação informal e não oficial para o público brasileiro.",
+    "Conteúdo convertido para português sem validação oficial.",
+    "Tradução não oficializada pelas fontes originais.",
+    "Versão em português desprovida de chancela oficial.",
+    "Texto disponibilizado em PT de maneira estritamente não oficial.",
+    "Adaptação textual para português com status não oficial.",
+    "Conteúdo em língua portuguesa, reitera-se, não oficial.",
+    "Tradução alternativa e não oficial para o idioma de Camões.",
+    "Versão paralela, não oficial, do documento original.",
+    "Texto interpretativo em português (versão não oficial).",
+    "Adaptação independente, sem nenhum vínculo oficial.",
+    "Conteúdo traduzido livremente com fins não oficiais."
+];
+
+// Gerando o restante dinamicamente para completar 500, mantendo a qualidade e foco.
+const adjetivos = ["livre", "independente", "informal", "comunitária", "alternativa", "paralela", "voluntária", "amadora", "extraoficial"];
+const substantivos = ["Tradução", "Versão", "Interpretação", "Adaptação", "Transposição", "Conversão"];
+const complementos = ["para português", "em português", "para PT", "em PT-BR", "para a língua portuguesa"];
+const finalizacoes = ["(não oficial)", "sem caráter oficial", "sem chancela oficial", "não reconhecida oficialmente", "sem vínculo oficial"];
+
+let id = variacoes.length;
+while (variacoes.length < 500) {
+    const sub = substantivos[Math.floor(Math.random() * substantivos.length)];
+    const adj = adjetivos[Math.floor(Math.random() * adjetivos.length)];
+    const comp = complementos[Math.floor(Math.random() * complementos.length)];
+    const fin = finalizacoes[Math.floor(Math.random() * finalizacoes.length)];
+    
+    // Alternando padrões para não ficar muito repetitivo
+    const padrao = Math.floor(Math.random() * 4);
+    let novaFrase = "";
+
+    switch(padrao) {
+        case 0: novaFrase = `${sub} ${adj} ${comp} - não oficial.`; break;
+        case 1: novaFrase = `${sub} ${comp} ${fin}.`; break;
+        case 2: novaFrase = `Não oficial: ${sub} ${adj} ${comp}.`; break;
+        case 3: novaFrase = `${sub} ${fin} ${comp}.`; break;
+    }
+
+    // Evitando duplicatas exatas se possível (embora improvável com o math.random, é bom garantir)
+    if (!variacoes.includes(novaFrase)) {
+        variacoes.push(novaFrase);
+    }
+}
+
+// Embaralhar o array para ficar bem misturado (Fisher-Yates)
+for (let i = variacoes.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [variacoes[i], variacoes[j]] = [variacoes[j], variacoes[i]];
+}
+
+// Funções da UI
+function gerarFrase() {
+    const display = document.getElementById("textoDisplay");
+    const randomIndex = Math.floor(Math.random() * variacoes.length);
+    
+    // Adiciona uma pequena animação de fade
+    display.style.opacity = 0;
+    
+    setTimeout(() => {
+        display.innerText = variacoes[randomIndex];
+        display.classList.remove("placeholder");
+        display.style.opacity = 1;
+    }, 150);
+}
+
+function copiarTexto() {
+    const display = document.getElementById("textoDisplay");
+    
+    // Não copia se for o placeholder
+    if (display.classList.contains("placeholder")) return;
+
+    const texto = display.innerText;
+    
+    navigator.clipboard.writeText(texto).then(() => {
+        mostrarToast();
+    }).catch(err => {
+        console.error('Falha ao copiar texto: ', err);
+        // Fallback para navegadores antigos
+        const textarea = document.createElement('textarea');
+        textarea.value = texto;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        mostrarToast();
+    });
+}
+
+function mostrarToast() {
+    const toast = document.getElementById("toast");
+    toast.className = "toast show";
+    setTimeout(function(){ toast.className = toast.className.replace("show", ""); }, 3000);
+}
+</script>
+
+</body>
+</html>
